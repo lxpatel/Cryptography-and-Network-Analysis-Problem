@@ -1,0 +1,33 @@
+# Define the shift count
+shift = 3
+
+# Input text
+plain_text = "HELLO WORLD"
+
+# Initialize an empty string to store the encrypted text
+encrypted_text = ""
+
+# Iterate through each character in the input text
+for char in plain_text:
+    # Check if the character is an uppercase letter
+    if char.isupper():
+        # Find the position of the letter in the range 0-25
+        char_index = ord(char) - ord('A')
+
+        # Perform the Caesar Cipher shift
+        new_index = (char_index + shift) % 26
+
+        # Convert the new index back to the Unicode of the uppercase letter
+        new_char = chr(new_index + ord('A'))
+
+        # Append the new character to the encrypted string
+        encrypted_text += new_char
+    else:
+        # If the character is not an uppercase letter, leave it unchanged
+        encrypted_text += char
+
+# Print the original plain text
+print("Original plain text:", plain_text)
+
+# Print the encrypted text
+print("Encrypted text:", encrypted_text)
