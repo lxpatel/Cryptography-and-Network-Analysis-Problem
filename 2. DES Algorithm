@@ -1,0 +1,25 @@
+!pip install pycryptodome
+from Crypto.Cipher import DES3
+from Crypto.Random import get_random_bytes
+def des_encrypt(key, plaintext):
+ cipher = DES3.new(key, DES3.MODE_ECB)
+ ciphertext = cipher.encrypt(plaintext)
+ return ciphertext
+def des_decrypt(key, ciphertext):
+ cipher = DES3.new(key, DES3.MODE_ECB)
+ plaintext = cipher.decrypt(ciphertext)
+ return plaintext
+def main():
+ # Generate a random 24-byte key for DES3 (3-key Triple DES)
+ key = get_random_bytes(24)
+ message = b"Hello, DES encryption!"
+ padding_length = 8 - len(message) % 8
+ message += bytes([padding_length] * padding_length)
+ # Encryption
+ encrypted_message = des_encrypt(key, message)
+ print("Encrypted message:", encrypted_message.hex())
+ # Decryption
+ decrypted_message = des_decrypt(key, encrypted_message)
+ print("Decrypted message:", decrypted_message[:-decrypted_message[-1]].decode('utf8'))
+if __name__ == "__main__":
+ main()
