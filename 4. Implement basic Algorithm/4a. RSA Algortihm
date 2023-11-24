@@ -1,0 +1,78 @@
+import random
+
+def primefiller():
+    prime = set()
+    for num in range(2, 251):
+        isPrime = True
+        for i in range(2, int(num**0.5) + 1):
+            if num % i == 0:
+                isPrime = False
+                break
+        if isPrime:
+            prime.add(num)
+    return prime
+
+def setkeys():
+    while True:
+        prime1 = random.choice(list(prime))
+        prime2 = random.choice(list(prime))
+        if prime1 != prime2:
+            break
+
+    n = prime1 * prime2
+    fi = (prime1 - 1) * (prime2 - 1)
+
+    for e in range(2, fi):
+        if gcd(e, fi) == 1:
+            break
+
+    d = 1
+    for i in range(1, fi):
+        if ((d * e) % fi) == 1:
+            break
+
+    public_key = (e, n)
+    private_key = (d, n)
+
+    return public_key, private_key
+
+def encrypt(message, public_key):
+    e, n = public_key
+    encrypted_message = []
+    for char in message:
+        encrypted_char = pow(ord(char), e, n)
+        encrypted_message.append(encrypted_char)
+    return encrypted_message
+
+def decrypt(encrypted_message, private_key):
+    d, n = private_key
+    decrypted_message = []
+    for encrypted_char in encrypted_message:
+        decrypted_char = pow(encrypted_char, d, n)
+        decrypted_message.append(chr(decrypted_char))
+    return decrypted_message
+
+def encoder(message):
+    encoded_message = []
+    for char in message:
+        encoded_char = ord(char)
+        encoded_message.append(encrypt(char, public_key))
+    return encoded_message
+
+def decoder(encoded_message):
+    decoded_message = []
+    for encrypted_char in encoded_message:
+        decrypted_char = decrypt(encrypted_char, private_key)
+        decoded_message.append(chr(decrypted_char))
+    return decoded_message
+
+prime = primefiller()
+public_key, private_key = setkeys()
+
+message = "Hello, World!"
+encoded_message = encoder(message)
+decrypted_message = decoder(encoded_message)
+
+print("Original message:", message)
+print("Encoded message:", encoded_message)
+print("Decrypted message:", decrypted_message)
