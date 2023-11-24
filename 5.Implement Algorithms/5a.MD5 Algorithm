@@ -1,0 +1,19 @@
+import hashlib
+
+# Initialize the string to hash
+str2hash = "GeeksforGeeks"
+
+# Encode the string to bytes
+encoded_str = str2hash.encode('utf-8')
+
+# Create an MD5 hash object
+hash_object = hashlib.md5()
+
+# Update the hash object with the encoded bytes
+hash_object.update(encoded_str)
+
+# Get the hexadecimal representation of the MD5 hash
+hex_digest = hash_object.hexdigest()
+
+# Print the hexadecimal hash
+print("MD5 hash of the string:", hex_digest)
