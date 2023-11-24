@@ -1,0 +1,95 @@
+def toLowerCase(text):
+    return text.lower()
+
+def removeSpaces(text):
+    return text.replace(" ", "")
+
+def Diagraph(text):
+    digraphs = []
+    for i in range(0, len(text), 2):
+        if i < len(text) - 1:
+            digraphs.append(text[i] + text[i + 1])
+        else:
+            digraphs.append(text[i] + 'x')
+    return digraphs
+
+def FillerLetter(text):
+    for i in range(len(text) - 1):
+        if text[i] == text[i + 1]:
+            text = text[:i + 1] + 'x' + text[i + 2:]
+            FillerLetter(text)
+    return text
+
+def generateKeyTable(word, list1):
+    key = FillerLetter(word)
+    keyTable = []
+    for i in range(5):
+        row = []
+        for j in range(5):
+            if len(key) > 0:
+                row.append(key[0])
+                key = key[1:]
+            else:
+                row.append(list1[0])
+                list1 = list1[1:]
+        keyTable.append(row)
+    return keyTable
+
+def search(mat, element):
+    for i in range(5):
+        for j in range(5):
+            if mat[i][j] == element:
+                return (i, j)
+    return (-1, -1)
+
+def encrypt_RowRule(matr, e1r, e1c, e2r, e2c):
+    e1 = matr[e1r][e1c]
+    e2 = matr[e2r][e2c]
+    return matr[e1r][(e1c + 1) % 5], matr[e2r][(e2c + 1) % 5]
+
+def encrypt_ColumnRule(matr, e1r, e1c, e2r, e2c):
+    e1 = matr[e1r][e1c]
+    e2 = matr[e2r][e2c]
+    return matr[(e1r + 1) % 5][e1c], matr[(e2r + 1) % 5][e2c]
+
+def encrypt_RectangleRule(matr, e1r, e1c, e2r, e2c):
+    e1 = matr[e1r][e1c]
+    e2 = matr[e2r][e2c]
+    return matr[e1r][e2c], matr[e2r][e1c]
+
+def encryptByPlayfairCipher(Matrix, plainList):
+    cipherList = []
+    for i in range(0, len(plainList), 2):
+        e1, e2 = plainList[i], plainList[i + 1]
+        e1r, e1c = search(Matrix, e1)
+        e2r, e2c = search(Matrix, e2)
+
+        if e1r == e2r:
+            cipherList.extend(encrypt_RowRule(Matrix, e1r, e1c, e2r, e2c))
+        elif e1c == e2c:
+            cipherList.extend(encrypt_ColumnRule(Matrix, e1r, e1c, e2r, e2c))
+        else:
+            cipherList.extend(encrypt_RectangleRule(Matrix, e1r, e1c, e2r, e2c))
+
+    return cipherList
+
+if _name_ == "_main_":
+    # Example usage
+    plaintext = "instruments"
+    key = "Monarchy"
+
+    # Preprocessing plaintext
+    plaintext = toLowerCase(plaintext)
+    plaintext = removeSpaces(plaintext)
+    plaintext = FillerLetter(plaintext)
+
+    # Generate key table
+    alphabet = "abcdefghijklmnopqrstuvwxyz"
+
+    keyTable = generateKeyTable(key, list(alphabet))
+
+    # Encrypt plaintext using key table
+    cipherText = encryptByPlayfairCipher(keyTable, Diagraph(plaintext))
+
+    print("Original Plaintext:", plaintext)
+    print("Encrypted Ciphertext:", "".join(cipherText))
