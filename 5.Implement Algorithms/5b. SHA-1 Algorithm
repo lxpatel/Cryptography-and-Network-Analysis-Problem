@@ -1,0 +1,19 @@
+import hashlib
+
+# Initialize the message to hash
+message = "hello"
+
+# Encode the message to bytes
+encoded_message = message.encode('utf-8')
+
+# Create a SHA-1 hash object
+hash_object = hashlib.sha1()
+
+# Update the hash object with the encoded bytes
+hash_object.update(encoded_message)
+
+# Get the hexadecimal representation of the SHA-1 hash
+hex_digest = hash_object.hexdigest()
+
+# Print the hexadecimal hash
+print("SHA-1 hash of the message:", hex_digest)
