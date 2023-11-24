@@ -1,0 +1,83 @@
+import base64
+from Cryptodome.Cipher import AES
+from Cryptodome.Util.Padding import pad, unpad
+import hashlib
+
+# Function to pad the input text to be a multiple of the block size using PKCS7 padding
+def pad(input_text):
+    block_size = 16  # AES block size in bytes
+    padding_length = block_size - len(input_text) % block_size
+    padding_bytes = bytes([padding_length] * padding_length)
+    padded_text = input_text + padding_bytes
+    return padded_text
+
+# Function to unpad the input padded text
+def unpad(padded_text):
+    padding_length = padded_text[-1]  # Last byte indicates padding length
+    unpadded_text = padded_text[:-padding_length]
+    return unpadded_text
+
+# Function to encrypt the input plain text using AES in Cipher Block Chaining (CBC) mode
+def encrypt(plain_text, key):
+    # Generate a random 16-byte Initialization Vector (IV)
+    iv = os.urandom(16)
+
+    # Create an AES cipher object in CBC mode with the given key and IV
+    cipher = AES.new(key, AES.MODE_CBC, iv)
+
+    # Pad the input plain text
+    padded_plain_text = pad(plain_text)
+
+    # Encrypt the padded plain text
+    ciphertext = cipher.encrypt(padded_plain_text)
+
+    # Combine the IV and ciphertext for secure transmission
+    encrypted_message = iv + ciphertext
+
+    return encrypted_message
+
+# Function to decrypt the input cipher text using AES in CBC mode
+def decrypt(encrypted_message, key):
+    # Extract the Initialization Vector (IV) from the encrypted message
+    iv = encrypted_message[:16]
+
+    # Extract the ciphertext from the encrypted message
+    ciphertext = encrypted_message[16:]
+
+    # Create an AES cipher object in CBC mode with the given key and IV
+    cipher = AES.new(key, AES.MODE_CBC, iv)
+
+    # Decrypt the ciphertext
+    decrypted_plain_text = cipher.decrypt(ciphertext)
+
+    # Unpad the decrypted plain text
+    unpadded_plain_text = unpad(decrypted_plain_text)
+
+    return unpadded_plain_text
+
+def main():
+    # Take user input for the message to be encrypted and the encryption key
+    plain_text = input("Enter the message to be encrypted: ")
+    encryption_key = input("Enter the encryption key: ")
+
+    # Derive a 32-byte AES key from the user-provided encryption key using SHA-256 hash
+    hash_object = hashlib.sha256(encryption_key.encode('utf-8'))
+    aes_key = hash_object.digest()[:32]
+
+    # Encrypt the message using AES
+    encrypted_message = encrypt(plain_text, aes_key)
+
+    # Encode the encrypted message in base64 for secure transmission
+    base64_encoded_message = base64.b64encode(encrypted_message).decode('utf-8')
+
+    # Print the encrypted message in base64 format
+    print("Encrypted message (base64):", base64_encoded_message)
+
+    # Decrypt the encrypted message using the same key
+    decrypted_plain_text = decrypt(base64.b64decode(base64_encoded_message), aes_key)
+
+    # Print the decrypted message
+    print("Decrypted message:", decrypted_plain_text)
+
+if __name__ == "__main__":
+    main()
