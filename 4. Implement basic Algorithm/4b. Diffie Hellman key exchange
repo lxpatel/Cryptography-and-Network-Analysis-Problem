@@ -1,0 +1,69 @@
+def prime_checker(p):
+    if p < 1:
+        return -1
+
+    if p == 2:
+        return 1
+
+    isPrime = True
+    for i in range(2, p):
+        if p % i == 0:
+            isPrime = False
+            break
+
+    if isPrime:
+        return 1
+    else:
+        return -1
+
+def primitive_check(g, p, L):
+    for i in range(1, p):
+        L.append(pow(g, i, p))
+
+    if len(set(L)) == len(L):
+        return 1
+    else:
+        return -1
+
+def main():
+    while True:
+        P = int(input("Enter a prime number P: "))
+
+        if prime_checker(P) == 1:
+            break
+        else:
+            print("Invalid prime number. Please enter a valid prime number.")
+
+    while True:
+        G = int(input("Enter a primitive root G for prime number P: "))
+
+        if primitive_check(G, P, []) == 1:
+            break
+        else:
+            print("Invalid primitive root. Please enter a valid primitive root for prime number P.")
+
+    x1 = int(input("Enter private key x1 for User 1: "))
+    while x1 >= P:
+        x1 = int(input("Invalid private key. Enter a private key less than P: "))
+
+    x2 = int(input("Enter private key x2 for User 2: "))
+    while x2 >= P:
+        x2 = int(input("Invalid private key. Enter a private key less than P: "))
+
+    y1 = pow(G, x1, P)
+    y2 = pow(G, x2, P)
+
+    k1 = pow(y2, x1, P)
+    k2 = pow(y1, x2, P)
+
+    print("Secret key k1 for User 1:", k1)
+    print("Secret key k2 for User 2:", k2)
+
+    if k1 == k2:
+        print("Key exchange successful.")
+    else:
+        print("Key exchange failed.")
+
+if __name__ == "__main__":
+    main()
+//for output give input like 23,10,12,14
